@@ -7,7 +7,7 @@ import com.wolf.rabbitmq.utils.RabbitMqUtil;
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
 
-public class ReceiveLogs01 {
+public class ReceiveLogs02 {
 
     public static final String EXCHANGE_NAME = "logs";
 
@@ -29,7 +29,7 @@ public class ReceiveLogs01 {
         System.out.println("等待接受消息");
 
         DeliverCallback deliverCallback = (consumerTag,message)->{
-            System.out.println(String.format("ReceiveLogs01 -> 接受消息:%s" ,new String(message.getBody(),"UTF-8")));
+            System.out.println(String.format("ReceiveLogs02 -> 接受消息:%s" ,new String(message.getBody(),"UTF-8")));
         };
         channel.basicConsume(tempQueue,true,deliverCallback,consumerTag -> {});
     }
