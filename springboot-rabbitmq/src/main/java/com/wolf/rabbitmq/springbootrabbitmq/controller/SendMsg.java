@@ -1,5 +1,6 @@
 package com.wolf.rabbitmq.springbootrabbitmq.controller;
 
+import com.wolf.rabbitmq.springbootrabbitmq.config.DelayedQueueConfig;
 import com.wolf.rabbitmq.springbootrabbitmq.config.TtlQueueConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.MessagePostProcessor;
@@ -48,6 +49,26 @@ public class SendMsg {
         rabbitTemplate.convertAndSend(TtlQueueConfig.X_EXCHANGE,
                 "XC",
                 String.format("消息来自ttl为10s的队列:%s", message),
+                messagePostProcessor);
+    }
+
+    /**
+     * 发送消息,基于插件
+     * @param message
+     * @param delayTime
+     */
+    @GetMapping("/sendDelayMsg/{message}/{delayTime}")
+    public void sendDelayMsg(@PathVariable String message,@PathVariable Integer delayTime){
+        log.info("当前时间:{},发送一条信息给一个delay队列:{},时长为{}ms",new Date().toString(),message,delayTime);
+
+        MessagePostProcessor messagePostProcessor = (msg)->{
+            //设置延迟时长
+            msg.getMessageProperties().setDelay(delayTime);
+            return msg;
+        };
+        rabbitTemplate.convertAndSend(DelayedQueueConfig.DELAYED_EXCHANGE_NAME,
+                DelayedQueueConfig.DELAYED_ROUTING_KEY,
+                String.format("延迟队列消息:%s", message),
                 messagePostProcessor);
     }
 }
